@@ -1,0 +1,26 @@
+# Data files (too large for git)
+data/
+models/
+
+# Python
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# Spark
+*.log
+derby.log
+metastore_db/
+
+# IDE
+.vscode/
+.idea/
+
+# Claude
+CLAUDE.md
+
+# Streaming output
+data/streaming/
+
+# PyVis output
+*.html
