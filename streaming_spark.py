@@ -10,6 +10,7 @@ from pyspark.sql.types import *
 from pyspark.ml import PipelineModel
 from pyspark.ml.functions import vector_to_array
 import json
+import csv
 
 spark = SparkSession.builder \
     .master("local[*]") \
@@ -65,8 +66,9 @@ AMT_UPPER = 192.01
 FRAUD_LOG = "data/streaming/fraud_alerts.csv"
 
 os.makedirs("data/streaming", exist_ok=True)
-with open(FRAUD_LOG, "w") as f:
-    f.write("batch,trans_date_trans_time,cc_num,merchant,category,amt,fraud_score\n")
+with open(FRAUD_LOG, "w", newline="") as f:
+    writer = csv.writer(f)
+    writer.writerow(["batch", "trans_date_trans_time", "cc_num", "merchant", "category", "amt", "fraud_score"])
 
 def preprocess(df):
     df = df \
@@ -152,14 +154,15 @@ def process_batch(batch_df, batch_id):
             .select("trans_date_trans_time", "cc_num", "merchant", "category", "amt",
                     F.round("fraud_score", 4).alias("score")) \
             .collect()
-        with open(FRAUD_LOG, "a") as f:
+        with open(FRAUD_LOG, "a", newline="") as f:
+            writer = csv.writer(f)
             for row in rows:
                 print(f"  {row['trans_date_trans_time']} | "
                       f"CC: ...{str(row['cc_num'])[-4:]} | "
                       f"{row['merchant'][:30]} | {row['category']} | "
                       f"${row['amt']:.2f} | score={row['score']}")
-                f.write(f"{n},{row['trans_date_trans_time']},{row['cc_num']},"
-                        f"{row['merchant']},{row['category']},{row['amt']},{row['score']}\n")
+                writer.writerow([n, row['trans_date_trans_time'], row['cc_num'],
+                                 row['merchant'], row['category'], row['amt'], row['score']])
     else:
         print("  Khong phat hien gian lan.")
 
