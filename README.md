@@ -31,7 +31,6 @@ Best model: **Gradient Boosted Trees** with optimal threshold = 0.35
 ├── models/
 │   ├── best_model/          # Saved GBT model + pipeline + threshold
 │   └── preprocessing/       # Parquet files (raw + processed)
-└── roadmap.md               # Full project roadmap
 ```
 
 ## Pipeline
